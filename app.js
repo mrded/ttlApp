@@ -1,7 +1,6 @@
 'use strict';
 
 angular.module('mcApp', [
-  'ui.sortable',
   'ui.bootstrap',
   'doowb.angular-pusher',
   'mcApp.services',
