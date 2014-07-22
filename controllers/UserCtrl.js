@@ -22,10 +22,6 @@ controllers.classy.controller({
     channel.bind("delete", function() { _reloadTodos(team.id, user.id); });
   },
 
-  isEmpty: function(userId) {
-    return (this.$filter('filter')(this.$.todos, {assigned_to_id: userId}, true).length == 0);
-  },
-
   addTodo: function(teamId, userId, todoTitle) {
     var $scope = this.$;
 
