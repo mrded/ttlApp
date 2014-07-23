@@ -42,4 +42,14 @@ angular.module('mcApp.services').service('TodoService', function($http, $q) {
     return deferred.promise;
   };
 
+  this.updateSortIndexes = function(changes) {
+    var deferred = $q.defer();
+
+    $http.post('/api/sorts/', {todos: changes}).success(function(todos) {
+      return deferred.resolve(todos);
+    });
+
+    return deferred.promise;
+  };
+
 });

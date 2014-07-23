@@ -16,6 +16,19 @@ angular.module('mcApp.directives').directive('mcDraggable', function(TodoService
 
           TodoService.update(todoId, {assigned_to_id: userId}); // Should update collection via Push.
         });
+      },
+
+      onUpdate: function (evt) {
+        var changes = [];
+
+        angular.forEach(element[0].getElementsByTagName("li"), function(value, position) {
+          changes.push({
+            id: value.getAttribute('data-todoId'),
+            position: position
+          });
+        });
+
+        TodoService.updateSortIndexes(changes);
       }
     });
   };
