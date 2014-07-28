@@ -28,7 +28,7 @@ angular.module('mcApp.directives').directive('mcDraggable', function(TodoService
           });
         });
 
-        TodoService.updateSortIndexes(changes);
+        TodoService.updateSortIndexes(scope.team.id, scope.user.id, changes);
       }
     });
   };

@@ -16,10 +16,8 @@ controllers.classy.controller({
     _reloadTodos(team.id, user.id);
 
     // Pusher events team-#-user-#-todo
-    var channel = pusher.subscribe(['team', team.id, 'user', user.id, 'todo'].join('-'));
-      
-    channel.bind("create", function() { _reloadTodos(team.id, user.id); });
-    channel.bind("delete", function() { _reloadTodos(team.id, user.id); });
+    var channel = pusher.subscribe(['team', team.id, 'user', user.id].join('-'));
+    channel.bind("reload", function() { _reloadTodos(team.id, user.id); });
   },
 
   addTodo: function(teamId, userId, todoTitle) {
