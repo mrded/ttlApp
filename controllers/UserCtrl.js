@@ -45,11 +45,7 @@ controllers.classy.controller({
     var TodoService = this.TodoService;
 
     TodoService.all(team.id, user.id).then(function(todos) {
-      $scope.todos.length = 0;
-
-      angular.forEach(todos, function(todo) {
-        $scope.todos.push(todo);
-      });
+      $scope.todos = todos;
     });
   }
 });
