@@ -13,11 +13,11 @@ controllers.classy.controller({
     var team = this.$scope.team;
 
     // Get all todos by team & user.
-    _reloadTodos(team.id, user.id);
+    _reloadTodos();
 
     // Pusher events team-#-user-#-todo
     var channel = pusher.subscribe(['team', team.id, 'user', user.id].join('-'));
-    channel.bind("reload", function() { _reloadTodos(team.id, user.id); });
+    channel.bind("reload", function() { _reloadTodos(); });
   },
 
   addTodo: function(teamId, userId, todoTitle) {
@@ -37,11 +37,14 @@ controllers.classy.controller({
     }
   },
 
-  _reloadTodos: function(teamId, userId) {
+  _reloadTodos: function() {
     var $scope = this.$;
+    var team = $scope.team;
+    var user = $scope.user;
+
     var TodoService = this.TodoService;
 
-    TodoService.all(teamId, userId).then(function(todos) {
+    TodoService.all(team.id, user.id).then(function(todos) {
       $scope.todos.length = 0;
 
       angular.forEach(todos, function(todo) {
