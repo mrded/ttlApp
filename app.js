@@ -2,6 +2,7 @@
 
 angular.module('mcApp', [
   'ui.bootstrap',
+  'ui.sortable',
   'doowb.angular-pusher',
   'mcApp.services',
   'mcApp.controllers',

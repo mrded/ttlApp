@@ -18,6 +18,13 @@ controllers.classy.controller({
     // Pusher events team-#-user-#-todo
     var channel = pusher.subscribe(['team', team.id, 'user', user.id].join('-'));
     channel.bind("reload", function() { _reloadTodos(); });
+    
+    // Set 
+    this.$scope.sortableOptions = {
+      placeholder: "list-group-item",
+      connectWith: ".list-todos",
+      opacity: 0.8,
+    };
   },
 
   addTodo: function(teamId, userId, todoTitle) {
@@ -35,6 +42,20 @@ controllers.classy.controller({
         $scope.todoTitle = '';
       });
     }
+  },
+  watch: {
+    '{object}todos': function(newValue, oldValue) {
+      var TodoService = this.TodoService;
+      var $scope = this.$;
+      var user = $scope.user;
+      
+      // Find the changed todo.
+      angular.forEach(newValue, function(todo) {
+        if (todo.assigned_to_id !== user.id) {
+          TodoService.update(todo.id, {assigned_to_id: user.id}); // Should update collection via Push.
+        }
+      });
+    },
   },
 
   _reloadTodos: function() {
