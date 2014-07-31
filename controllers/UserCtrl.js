@@ -7,7 +7,7 @@ controllers.classy.controller({
   init: function() {
     var _reloadTodos = this._reloadTodos;
 
-    this.$.todos = [];
+    var todos = this.$.todos = [];
 
     var user = this.$scope.user;
     var team = this.$scope.team;
@@ -48,6 +48,21 @@ controllers.classy.controller({
       var TodoService = this.TodoService;
       var $scope = this.$;
       var user = $scope.user;
+      var team = $scope.team;
+      
+      // Ordering.
+      if (oldValue.length > 0 && newValue.length > 0) {
+        var changes = [];
+        
+        angular.forEach(newValue, function(todo, key) {
+          changes.push({
+            id: todo.id,
+            position: key
+          });
+        });
+        
+        TodoService.updateSortIndexes(team.id, user.id, changes);
+      }
       
       // Find the changed todo.
       angular.forEach(newValue, function(todo) {
