@@ -51,7 +51,8 @@ controllers.classy.controller({
       var team = $scope.team;
       
       // Ordering.
-      if (oldValue.length > 0 && newValue.length > 0) {
+      if (oldValue.length == newValue.length) {
+        console.log('Update indexes', user.full_name);
         var changes = [];
         
         angular.forEach(newValue, function(todo, key) {
@@ -67,6 +68,7 @@ controllers.classy.controller({
       // Find the changed todo.
       angular.forEach(newValue, function(todo) {
         if (todo.assigned_to_id !== user.id) {
+          console.log('Update todo', user.full_name, todo);
           TodoService.update(todo.id, {assigned_to_id: user.id}); // Should update collection via Push.
         }
       });
