@@ -15,7 +15,7 @@ controllers.classy.controller({
     // Get all todos by team & user.
     _reloadTodos();
 
-    // Pusher events team-#-user-#-todo
+    // Pusher events team-#-user-#
     var channel = pusher.subscribe(['team', team.id, 'user', user.id].join('-'));
     channel.bind("reload", function() { _reloadTodos(); });
     
@@ -44,32 +44,23 @@ controllers.classy.controller({
     }
   },
   watch: {
-    '{object}todos': function(newValue, oldValue) {
+    '{object}todos': function(newTodos, oldTodos) {
       var TodoService = this.TodoService;
       var $scope = this.$;
       var user = $scope.user;
       var team = $scope.team;
-      
-      // Ordering.
-      if (oldValue.length == newValue.length) {
-        console.log('Update indexes', user.full_name);
-        var changes = [];
-        
-        angular.forEach(newValue, function(todo, key) {
-          changes.push({
-            id: todo.id,
-            position: key
-          });
-        });
-        
-        TodoService.updateSortIndexes(team.id, user.id, changes);
-      }
-      
+            
       // Find the changed todo.
-      angular.forEach(newValue, function(todo) {
+      angular.forEach(newTodos, function(todo, key) {
         if (todo.assigned_to_id !== user.id) {
-          console.log('Update todo', user.full_name, todo);
-          TodoService.update(todo.id, {assigned_to_id: user.id}); // Should update collection via Push.
+          // Update sort indexes.
+          TodoService.updateMultiple(team.id, user.id, newTodos.map(function(todo, key) {
+            return {
+              id: todo.id, 
+              position: key,
+              assigned_to_id: user.id
+            };
+          }));
         }
       });
     },
@@ -79,7 +70,7 @@ controllers.classy.controller({
     var $scope = this.$;
     var team = $scope.team;
     var user = $scope.user;
-
+    
     var TodoService = this.TodoService;
 
     TodoService.all(team.id, user.id).then(function(todos) {

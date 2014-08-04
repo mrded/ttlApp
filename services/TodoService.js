@@ -32,20 +32,20 @@ angular.module('mcApp.services').service('TodoService', function($http, $q) {
     return deferred.promise;
   };
 
-  this.update = function(todoId, changes) {
+  this.update = function(todoId, changes, reload) {
     var deferred = $q.defer();
 
-    $http.put('/api/todos/' + todoId, {todo: changes}).success(function(todo) {
+    $http.put('/api/todos/' + todoId, {todo: changes, reload: reload}).success(function(todo) {
       return deferred.resolve(todo);
     });
 
     return deferred.promise;
   };
 
-  this.updateSortIndexes = function(teamId, userId, changes) {
+  this.updateMultiple = function(teamId, userId, changes) {
     var deferred = $q.defer();
-
-    $http.post('/api/teams/' + teamId + '/users/' + userId + '/sorts/', {todos: changes}).success(function(todos) {
+    
+    $http.post('/api/teams/' + teamId + '/users/' + userId + '/updates/', {todos: changes}).success(function(todos) {
       return deferred.resolve(todos);
     });
 
