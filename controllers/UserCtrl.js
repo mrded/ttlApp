@@ -45,25 +45,29 @@ controllers.classy.controller({
   },
   watch: {
     '{object}todos': function(newTodos, oldTodos) {
-      var TodoService = this.TodoService;
+      var _updateTodos = this._updateTodos;
       var $scope = this.$;
       var user = $scope.user;
       var team = $scope.team;
             
       // Find the changed todo.
       angular.forEach(newTodos, function(todo, key) {
-        if (todo.assigned_to_id !== user.id) {
-          // Update sort indexes.
-          TodoService.updateMultiple(team.id, user.id, newTodos.map(function(todo, key) {
-            return {
-              id: todo.id, 
-              position: key,
-              assigned_to_id: user.id
-            };
-          }));
-        }
+        if (todo.assigned_to_id !== user.id) _updateTodos(user.id, newTodos);
       });
     },
+  },
+  
+  _updateTodos: function(userId, todos) {
+    var $scope = this.$;
+    var team = $scope.team;
+    
+    this.TodoService.updateMultiple(team.id, userId, todos.map(function(todo, key) {
+      return {
+        id: todo.id, 
+        position: key,
+        assigned_to_id: userId
+      };
+    }));
   },
 
   _reloadTodos: function() {
