@@ -6,22 +6,39 @@ controllers.classy.controller({
 
   init: function() {
     var _reloadTodos = this._reloadTodos;
+    var _updateTodos = this._updateTodos;
 
     var user = this.$scope.user;
     var team = this.$scope.team;
+    var $scope = this.$;
 
     // Get all todos by team & user.
-    _reloadTodos();
+    this.TodoService.all(team.id, user.id).then(function(todos) {
+      $scope.todos = todos;
+    });
 
     // Pusher events team-#-user-#
     var channel = pusher.subscribe(['team', team.id, 'user', user.id].join('-'));
-    channel.bind("reload", function() { _reloadTodos(); });
+    
+    channel.bind("reload", function(todos) { 
+      // console.log('reload', user.full_name, todos);
+      $scope.todos = todos;
+      $scope.$apply();
+    });
     
     // Set 
-    this.$scope.sortableOptions = {
+    $scope.sortableOptions = {
       placeholder: "list-group-item",
       connectWith: ".list-todos",
       opacity: 0.8,
+      remove: function(event, ui) {
+        // console.log('remove', event, ui, $scope.user.full_name, $scope.todos);
+        // _updateTodos(user.id, $scope.todos);
+      },
+      receive: function(event, ui) {}, // Use watch:{object}todos instead, because ui.item.scope() is empty.
+      update: function(event, ui) {
+        console.log('update', $scope.user.full_name, $scope.todos);
+      },
     };
   },
 
@@ -43,14 +60,14 @@ controllers.classy.controller({
   },
   watch: {
     '{object}todos': function(newTodos, oldTodos) {
-      var _updateTodos = this._updateTodos;
       var $scope = this.$;
-      var user = $scope.user;
-      var team = $scope.team;
+      var _updateTodos = this._updateTodos;
       
-      if (oldTodos !== undefined) { // Skip initialisation.
-        _updateTodos(user.id, newTodos);
-      }
+      // @HACK: Because sortableOptions:receive doesn't provide ui.item.scope() object.
+      // Find the changed todo.
+      angular.forEach(newTodos, function(todo, key) {
+        if (todo.assigned_to_id !== $scope.user.id) { _updateTodos($scope.user.id, newTodos); }
+      });
     },
   },
   
@@ -65,17 +82,5 @@ controllers.classy.controller({
         assigned_to_id: userId
       };
     }));
-  },
-
-  _reloadTodos: function() {
-    var $scope = this.$;
-    var team = $scope.team;
-    var user = $scope.user;
-    
-    var TodoService = this.TodoService;
-    
-    TodoService.all(team.id, user.id).then(function(todos) {
-      $scope.todos = todos;
-    });
   }
 });
