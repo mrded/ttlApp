@@ -45,9 +45,11 @@ angular.module('mcApp.services').service('TodoService', function($http, $q) {
   this.updateMultiple = function(teamId, userId, changes) {
     var deferred = $q.defer();
     
-    $http.post('/api/teams/' + teamId + '/users/' + userId + '/updates/', {todos: changes}).success(function(todos) {
-      return deferred.resolve(todos);
-    });
+    if (changes.length > 0) {
+      $http.post('/api/teams/' + teamId + '/users/' + userId + '/updates/', {todos: changes}).success(function(todos) {
+        return deferred.resolve(todos);
+      });
+    }
 
     return deferred.promise;
   };
