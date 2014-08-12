@@ -7,8 +7,6 @@ controllers.classy.controller({
   init: function() {
     var _reloadTodos = this._reloadTodos;
 
-    var todos = this.$.todos = [];
-
     var user = this.$scope.user;
     var team = this.$scope.team;
 
@@ -49,11 +47,10 @@ controllers.classy.controller({
       var $scope = this.$;
       var user = $scope.user;
       var team = $scope.team;
-            
-      // Find the changed todo.
-      angular.forEach(newTodos, function(todo, key) {
-        if (todo.assigned_to_id !== user.id) _updateTodos(user.id, newTodos);
-      });
+      
+      if (oldTodos !== undefined) { // Skip initialisation.
+        _updateTodos(user.id, newTodos);
+      }
     },
   },
   
@@ -76,7 +73,7 @@ controllers.classy.controller({
     var user = $scope.user;
     
     var TodoService = this.TodoService;
-
+    
     TodoService.all(team.id, user.id).then(function(todos) {
       $scope.todos = todos;
     });
